@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Group Chat</title>
+    <title>Private Group Chat - Multiple Users</title>
     <style>
         * {
             margin: 0;
@@ -12,307 +12,97 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e2f;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
-        .chat-wrapper {
-            width: 1200px;
-            height: 800px;
-            background: #0f3460;
-            border-radius: 30px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        .container {
             display: flex;
-            overflow: hidden;
+            gap: 20px;
+            width: 1400px;
+            height: 900px;
         }
 
-        /* Sidebar Styles */
-        .sidebar {
-            width: 300px;
-            background: #1a1a2e;
-            border-right: 1px solid #16213e;
+        /* User Windows */
+        .user-window {
+            flex: 1;
+            background: #2d2d3a;
+            border-radius: 15px;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
+            border: 1px solid #3d3d4f;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .sidebar-header {
-            padding: 20px;
-            background: #16213e;
+        .user-header {
+            padding: 15px;
+            background: #1a1a2e;
             color: white;
-            border-bottom: 1px solid #0f3460;
-        }
-
-        .sidebar-header h3 {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-header p {
-            font-size: 0.8rem;
-            color: #a8b2d1;
-        }
-
-        .user-profile {
-            padding: 15px 20px;
-            background: #0f3460;
             display: flex;
             align-items: center;
             gap: 10px;
-            border-bottom: 1px solid #16213e;
+            border-bottom: 2px solid #0f3460;
         }
 
         .user-avatar {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
             font-weight: bold;
             font-size: 1.2rem;
         }
 
-        .user-info {
-            flex: 1;
-        }
+        .user-1 .user-avatar { background: #ff6b6b; }
+        .user-2 .user-avatar { background: #4ecdc4; }
+        .user-3 .user-avatar { background: #ffd93d; color: #333; }
 
-        .user-info h4 {
-            color: white;
-            font-size: 0.9rem;
-        }
-
-        .user-info p {
-            color: #10b981;
-            font-size: 0.7rem;
-        }
-
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            background: #10b981;
-            border-radius: 50%;
-        }
-
-        .search-box {
-            padding: 15px;
-            border-bottom: 1px solid #0f3460;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 10px;
-            background: #16213e;
-            border: 1px solid #0f3460;
-            border-radius: 10px;
-            color: white;
-            outline: none;
-        }
-
-        .search-box input::placeholder {
-            color: #6b7280;
-        }
-
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .chat-item {
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            border-bottom: 1px solid #16213e;
-        }
-
-        .chat-item:hover {
-            background: #16213e;
-        }
-
-        .chat-item.active {
-            background: #0f3460;
-            border-left: 3px solid #667eea;
-        }
-
-        .chat-avatar {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            position: relative;
-        }
-
-        .chat-avatar.group {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .online-badge {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 12px;
-            height: 12px;
-            background: #10b981;
-            border: 2px solid #1a1a2e;
-            border-radius: 50%;
-        }
-
-        .chat-info {
-            flex: 1;
-        }
-
-        .chat-info h4 {
-            color: white;
-            font-size: 0.9rem;
+        .user-info h3 {
+            font-size: 1rem;
             margin-bottom: 3px;
         }
 
-        .chat-info p {
-            color: #a8b2d1;
-            font-size: 0.75rem;
-        }
-
-        .chat-time {
-            color: #6b7280;
+        .user-status {
             font-size: 0.7rem;
-        }
-
-        /* Main Chat Area */
-        .main-chat {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #16213e;
-        }
-
-        .chat-header {
-            padding: 20px;
-            background: #1a1a2e;
-            border-bottom: 1px solid #0f3460;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .chat-header-info h2 {
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-
-        .chat-header-info p {
             color: #10b981;
-            font-size: 0.8rem;
-        }
-
-        .chat-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-btn {
-            width: 35px;
-            height: 35px;
-            background: #0f3460;
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .action-btn:hover {
-            background: #667eea;
-            transform: scale(1.1);
-        }
-
-        .messages-container {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background: #16213e;
-        }
-
-        .message-date-divider {
-            text-align: center;
-            margin: 10px 0;
-            position: relative;
-        }
-
-        .message-date-divider span {
-            background: #1a1a2e;
-            padding: 5px 15px;
-            border-radius: 20px;
-            color: #a8b2d1;
-            font-size: 0.7rem;
-            border: 1px solid #0f3460;
-        }
-
-        .message-wrapper {
-            display: flex;
-            flex-direction: column;
-            max-width: 70%;
-        }
-
-        .message-wrapper.own-message {
-            align-self: flex-end;
-        }
-
-        .message-wrapper.other-message {
-            align-self: flex-start;
-        }
-
-        .message-sender {
             display: flex;
             align-items: center;
             gap: 5px;
-            margin-bottom: 5px;
-            padding-left: 5px;
         }
 
-        .message-sender-avatar {
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
             border-radius: 50%;
+        }
+
+        /* Chat Area */
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #2d2d3a;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.6rem;
-            font-weight: bold;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .message-sender-name {
-            color: #a8b2d1;
-            font-size: 0.7rem;
-        }
-
-        .message-bubble {
-            padding: 12px 16px;
-            border-radius: 20px;
-            word-wrap: break-word;
-            position: relative;
+        /* Message Styles */
+        .message {
+            max-width: 85%;
+            padding: 10px 12px;
+            border-radius: 15px;
             animation: fadeIn 0.3s ease;
+            word-wrap: break-word;
         }
 
         @keyframes fadeIn {
@@ -320,648 +110,423 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .own-message .message-bubble {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .message.sent {
+            background: #4a6fa5;
             color: white;
+            align-self: flex-end;
             border-bottom-right-radius: 5px;
         }
 
-        .other-message .message-bubble {
-            background: #1a1a2e;
+        .message.received {
+            background: #40404f;
             color: white;
+            align-self: flex-start;
             border-bottom-left-radius: 5px;
-            border: 1px solid #0f3460;
         }
 
-        .message-content {
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.7rem;
+        }
+
+        .message.sent .message-header {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .message.received .message-header {
+            color: #a0a0b0;
+        }
+
+        .sender-name {
+            font-weight: 600;
+        }
+
+        .message-text {
             font-size: 0.9rem;
             line-height: 1.4;
-            margin-bottom: 5px;
         }
 
-        .message-footer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.6rem;
-            color: rgba(255,255,255,0.5);
-        }
-
-        .message-status {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .message-status.read {
-            color: #667eea;
-        }
-
-        .typing-indicator {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            padding: 10px 15px;
+        /* Input Area */
+        .input-area {
+            padding: 15px;
             background: #1a1a2e;
-            border-radius: 20px;
-            border: 1px solid #0f3460;
-            max-width: 100px;
+            border-top: 1px solid #3d3d4f;
         }
 
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: #667eea;
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
-        }
-
-        .message-input-area {
-            padding: 20px;
-            background: #1a1a2e;
-            border-top: 1px solid #0f3460;
+        .input-group {
             display: flex;
             gap: 10px;
             align-items: center;
         }
 
-        .attach-btn {
-            width: 40px;
-            height: 40px;
-            background: #0f3460;
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .attach-btn:hover {
-            background: #667eea;
-            transform: scale(1.1);
-        }
-
-        #messageInput {
+        .user-input {
             flex: 1;
-            padding: 12px 15px;
-            background: #0f3460;
-            border: 1px solid #16213e;
-            border-radius: 25px;
+            padding: 10px 15px;
+            background: #2d2d3a;
+            border: 1px solid #4a4a5a;
+            border-radius: 20px;
             color: white;
             outline: none;
             font-size: 0.9rem;
         }
 
-        #messageInput:focus {
-            border-color: #667eea;
+        .user-input:focus {
+            border-color: #4a6fa5;
         }
 
-        #messageInput::placeholder {
-            color: #6b7280;
+        .user-input::placeholder {
+            color: #6b6b7b;
         }
 
-        .emoji-btn, .send-btn {
-            width: 40px;
-            height: 40px;
-            background: #0f3460;
+        .send-btn {
+            width: 36px;
+            height: 36px;
             border: none;
             border-radius: 50%;
+            background: #4a6fa5;
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.2rem;
         }
 
-        .send-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .emoji-btn:hover, .send-btn:hover {
+        .send-btn:hover {
+            background: #5f7fb5;
             transform: scale(1.1);
         }
 
-        .members-list {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            background: #1a1a2e;
-            border-radius: 20px;
-            padding: 20px;
-            display: none;
-            z-index: 1000;
-            border: 1px solid #0f3460;
-        }
-
-        .members-list.show {
-            display: block;
-        }
-
-        .members-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .member-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            color: white;
-            border-bottom: 1px solid #0f3460;
-        }
-
-        .member-avatar {
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .member-info {
-            flex: 1;
-        }
-
-        .member-info h4 {
-            font-size: 0.9rem;
-        }
-
-        .member-info p {
+        .typing-indicator {
             font-size: 0.7rem;
-            color: #10b981;
+            color: #a0a0b0;
+            margin: 5px 0 0 15px;
+            font-style: italic;
+            min-height: 20px;
         }
 
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 999;
+        .user-count {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
-        .overlay.show {
-            display: block;
+        .badge {
+            background: #1a1a2e;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid #3d3d4f;
+        }
+
+        .clear-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .clear-btn:hover {
+            background: #c82333;
         }
     </style>
 </head>
 <body>
-    <div class="chat-wrapper">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h3>Private Groups</h3>
-                <p>5 members online</p>
-            </div>
-            
-            <div class="user-profile">
-                <div class="user-avatar">JD</div>
+    <div class="container">
+        <!-- User 1 Window (Alice) -->
+        <div class="user-window user-1" id="user1-window">
+            <div class="user-header">
+                <div class="user-avatar">A</div>
                 <div class="user-info">
-                    <h4>John Doe</h4>
-                    <p>Online</p>
+                    <h3>Alice (You)</h3>
+                    <div class="user-status">
+                        <span class="status-dot"></span>
+                        Online
+                    </div>
                 </div>
-                <div class="status-indicator"></div>
             </div>
             
-            <div class="search-box">
-                <input type="text" placeholder="Search conversations...">
-            </div>
+            <div class="chat-messages" id="user1-messages"></div>
             
-            <div class="chat-list">
-                <div class="chat-item active">
-                    <div class="chat-avatar group">
-                        <span>DP</span>
-                        <span class="online-badge"></span>
-                    </div>
-                    <div class="chat-info">
-                        <h4>Design Team</h4>
-                        <p>Sarah: Let's review the mockups</p>
-                    </div>
-                    <div class="chat-time">5m</div>
-                </div>
-                
-                <div class="chat-item">
-                    <div class="chat-avatar group">
-                        <span>PM</span>
-                        <span class="online-badge"></span>
-                    </div>
-                    <div class="chat-info">
-                        <h4>Project Managers</h4>
-                        <p>You: I'll send the report</p>
-                    </div>
-                    <div class="chat-time">1h</div>
-                </div>
-                
-                <div class="chat-item">
-                    <div class="chat-avatar group">
-                        <span>FD</span>
-                    </div>
-                    <div class="chat-info">
-                        <h4>Frontend Devs</h4>
-                        <p>Mike: Pushed the changes</p>
-                    </div>
-                    <div class="chat-time">3h</div>
-                </div>
-                
-                <div class="chat-item">
-                    <div class="chat-avatar group">
-                        <span>BK</span>
-                    </div>
-                    <div class="chat-info">
-                        <h4>Backend Team</h4>
-                        <p>Anna: API is ready</p>
-                    </div>
-                    <div class="chat-time">5h</div>
+            <div class="input-area">
+                <div class="typing-indicator" id="user1-typing"></div>
+                <div class="input-group">
+                    <input type="text" class="user-input" id="user1-input" placeholder="Type as Alice...">
+                    <button class="send-btn" onclick="sendMessage(1)">→</button>
                 </div>
             </div>
         </div>
-        
-        <!-- Main Chat Area -->
-        <div class="main-chat">
-            <div class="chat-header">
-                <div class="chat-header-info">
-                    <h2>Design Team</h2>
-                    <p>4 members • 2 online</p>
-                </div>
-                <div class="chat-actions">
-                    <button class="action-btn" onclick="showMembers()">👥</button>
-                    <button class="action-btn">🔔</button>
-                    <button class="action-btn">⚙️</button>
+
+        <!-- User 2 Window (Bob) -->
+        <div class="user-window user-2" id="user2-window">
+            <div class="user-header">
+                <div class="user-avatar">B</div>
+                <div class="user-info">
+                    <h3>Bob (You)</h3>
+                    <div class="user-status">
+                        <span class="status-dot"></span>
+                        Online
+                    </div>
                 </div>
             </div>
             
-            <div class="messages-container" id="messagesContainer">
-                <div class="message-date-divider">
-                    <span>Today</span>
+            <div class="chat-messages" id="user2-messages"></div>
+            
+            <div class="input-area">
+                <div class="typing-indicator" id="user2-typing"></div>
+                <div class="input-group">
+                    <input type="text" class="user-input" id="user2-input" placeholder="Type as Bob...">
+                    <button class="send-btn" onclick="sendMessage(2)">→</button>
                 </div>
-                
-                <!-- Sample messages will be added here via JavaScript -->
+            </div>
+        </div>
+
+        <!-- User 3 Window (Charlie) -->
+        <div class="user-window user-3" id="user3-window">
+            <div class="user-header">
+                <div class="user-avatar">C</div>
+                <div class="user-info">
+                    <h3>Charlie (You)</h3>
+                    <div class="user-status">
+                        <span class="status-dot"></span>
+                        Online
+                    </div>
+                </div>
             </div>
             
-            <!-- Typing Indicator -->
-            <div class="typing-indicator" id="typingIndicator" style="display: none; margin: 0 20px;">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <div class="chat-messages" id="user3-messages"></div>
             
-            <!-- Message Input -->
-            <div class="message-input-area">
-                <button class="attach-btn">📎</button>
-                <input type="text" id="messageInput" placeholder="Type your message...">
-                <button class="emoji-btn">😊</button>
-                <button class="send-btn" onclick="sendMessage()">➤</button>
+            <div class="input-area">
+                <div class="typing-indicator" id="user3-typing"></div>
+                <div class="input-group">
+                    <input type="text" class="user-input" id="user3-input" placeholder="Type as Charlie...">
+                    <button class="send-btn" onclick="sendMessage(3)">→</button>
+                </div>
             </div>
         </div>
     </div>
-    
-    <!-- Members List Modal -->
-    <div class="members-list" id="membersList">
-        <div class="members-header">
-            <h3>Group Members (4)</h3>
-            <button class="close-btn" onclick="hideMembers()">&times;</button>
-        </div>
-        <div class="member-item">
-            <div class="member-avatar">S</div>
-            <div class="member-info">
-                <h4>Sarah Johnson</h4>
-                <p>Online</p>
-            </div>
-            <div class="member-role">Admin</div>
-        </div>
-        <div class="member-item">
-            <div class="member-avatar">M</div>
-            <div class="member-info">
-                <h4>Mike Chen</h4>
-                <p>Last seen 5m ago</p>
-            </div>
-            <div class="member-role">Member</div>
-        </div>
-        <div class="member-item">
-            <div class="member-avatar">A</div>
-            <div class="member-info">
-                <h4>Anna Williams</h4>
-                <p>Online</p>
-            </div>
-            <div class="member-role">Member</div>
-        </div>
-        <div class="member-item">
-            <div class="member-avatar">J</div>
-            <div class="member-info">
-                <h4>John Doe (You)</h4>
-                <p>Online</p>
-            </div>
-            <div class="member-role">Member</div>
-        </div>
-    </div>
-    
-    <div class="overlay" id="overlay" onclick="hideMembers()"></div>
 
     <script>
-        // Get DOM elements
-        const messagesContainer = document.getElementById('messagesContainer');
-        const messageInput = document.getElementById('messageInput');
-        const typingIndicator = document.getElementById('typingIndicator');
-        
-        // Chat state
-        let currentUser = {
-            name: 'John Doe',
-            initials: 'JD',
-            id: 'user1'
+        // User definitions
+        const users = {
+            1: { name: 'Alice', color: '#ff6b6b' },
+            2: { name: 'Bob', color: '#4ecdc4' },
+            3: { name: 'Charlie', color: '#ffd93d' }
         };
-        
-        // Group members
-        const groupMembers = [
-            { id: 'user1', name: 'John Doe', initials: 'JD', isOnline: true, isYou: true },
-            { id: 'user2', name: 'Sarah Johnson', initials: 'SJ', isOnline: true, isAdmin: true },
-            { id: 'user3', name: 'Mike Chen', initials: 'MC', isOnline: false },
-            { id: 'user4', name: 'Anna Williams', initials: 'AW', isOnline: true }
-        ];
-        
-        // Message history
+
+        // Message history (shared across all users)
         let messages = [
-            {
-                id: 1,
-                senderId: 'user2',
-                senderName: 'Sarah Johnson',
-                senderInitials: 'SJ',
-                content: 'Hey team! How are the designs coming along?',
-                timestamp: new Date(Date.now() - 3600000),
-                status: 'read'
-            },
-            {
-                id: 2,
-                senderId: 'user3',
-                senderName: 'Mike Chen',
-                senderInitials: 'MC',
-                content: 'Almost done with the homepage mockups!',
-                timestamp: new Date(Date.now() - 3500000),
-                status: 'read'
-            },
-            {
-                id: 3,
-                senderId: 'user4',
-                senderName: 'Anna Williams',
-                senderInitials: 'AW',
-                content: 'Great! I can review them after lunch.',
-                timestamp: new Date(Date.now() - 3400000),
-                status: 'read'
-            }
+            { id: 1, userId: 1, text: "Hey everyone! Welcome to the private group chat!", timestamp: Date.now() - 60000 },
+            { id: 2, userId: 2, text: "Thanks Alice! Glad to be here.", timestamp: Date.now() - 45000 },
+            { id: 3, userId: 3, text: "Hi all! This is great - we can all chat together!", timestamp: Date.now() - 30000 }
         ];
-        
-        // Initialize chat
-        function initChat() {
-            renderMessages();
-            messageInput.focus();
+
+        // Typing states
+        let typingUsers = {
+            1: false,
+            2: false,
+            3: false
+        };
+
+        // Typing timeouts
+        let typingTimeouts = {
+            1: null,
+            2: null,
+            3: null
+        };
+
+        // Get current time
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
-        
-        // Render all messages
-        function renderMessages() {
-            messagesContainer.innerHTML = '';
-            
-            // Add date divider
-            const dateDivider = document.createElement('div');
-            dateDivider.className = 'message-date-divider';
-            dateDivider.innerHTML = '<span>Today</span>';
-            messagesContainer.appendChild(dateDivider);
-            
+
+        // Format timestamp
+        function formatTimestamp(timestamp) {
+            const diff = Date.now() - timestamp;
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Update all users' chat windows
+        function updateAllChats() {
+            for (let userId = 1; userId <= 3; userId++) {
+                updateUserChat(userId);
+            }
+        }
+
+        // Update specific user's chat window
+        function updateUserChat(currentUserId) {
+            const messagesDiv = document.getElementById(`user${currentUserId}-messages`);
+            if (!messagesDiv) return;
+
             // Sort messages by timestamp
             const sortedMessages = [...messages].sort((a, b) => a.timestamp - b.timestamp);
             
-            sortedMessages.forEach(message => {
-                const isOwnMessage = message.senderId === currentUser.id;
-                addMessageToUI(message, isOwnMessage);
+            let html = '';
+            sortedMessages.forEach(msg => {
+                const isOwnMessage = msg.userId === currentUserId;
+                const senderName = users[msg.userId].name;
+                
+                html += `
+                    <div class="message ${isOwnMessage ? 'sent' : 'received'}">
+                        <div class="message-header">
+                            <span class="sender-name">${isOwnMessage ? 'You' : senderName}</span>
+                            <span class="timestamp">${formatTimestamp(msg.timestamp)}</span>
+                        </div>
+                        <div class="message-text">${escapeHtml(msg.text)}</div>
+                    </div>
+                `;
             });
             
-            scrollToBottom();
+            messagesDiv.innerHTML = html;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
-        
-        // Add message to UI
-        function addMessageToUI(message, isOwnMessage) {
-            const messageWrapper = document.createElement('div');
-            messageWrapper.className = `message-wrapper ${isOwnMessage ? 'own-message' : 'other-message'}`;
-            messageWrapper.dataset.messageId = message.id;
-            
-            if (!isOwnMessage) {
-                const senderDiv = document.createElement('div');
-                senderDiv.className = 'message-sender';
-                senderDiv.innerHTML = `
-                    <div class="message-sender-avatar">${message.senderInitials}</div>
-                    <span class="message-sender-name">${message.senderName}</span>
-                `;
-                messageWrapper.appendChild(senderDiv);
-            }
-            
-            const messageBubble = document.createElement('div');
-            messageBubble.className = 'message-bubble';
-            
-            const messageContent = document.createElement('div');
-            messageContent.className = 'message-content';
-            messageContent.textContent = message.content;
-            
-            const messageFooter = document.createElement('div');
-            messageFooter.className = 'message-footer';
-            
-            const timestamp = formatTimestamp(message.timestamp);
-            messageFooter.innerHTML = timestamp;
-            
-            if (isOwnMessage) {
-                const statusSpan = document.createElement('span');
-                statusSpan.className = `message-status ${message.status}`;
-                statusSpan.innerHTML = message.status === 'read' ? '✓✓' : '✓';
-                messageFooter.appendChild(statusSpan);
-            }
-            
-            messageBubble.appendChild(messageContent);
-            messageBubble.appendChild(messageFooter);
-            messageWrapper.appendChild(messageBubble);
-            
-            messagesContainer.appendChild(messageWrapper);
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-        
-        // Format timestamp
-        function formatTimestamp(date) {
-            const now = new Date();
-            const diff = now - date;
+
+        // Send message from specific user
+        function sendMessage(userId) {
+            const input = document.getElementById(`user${userId}-input`);
+            const text = input.value.trim();
             
-            if (diff < 60000) {
-                return 'Just now';
-            } else if (diff < 3600000) {
-                const minutes = Math.floor(diff / 60000);
-                return `${minutes}m ago`;
-            } else {
-                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            }
-        }
-        
-        // Send message
-        function sendMessage() {
-            const content = messageInput.value.trim();
-            
-            if (content === '') {
-                alert('Please type a message');
+            if (text === '') {
+                alert('Please type a message!');
                 return;
             }
-            
-            // Create new message
+
+            // Add message to shared history
             const newMessage = {
                 id: messages.length + 1,
-                senderId: currentUser.id,
-                senderName: currentUser.name,
-                senderInitials: currentUser.initials,
-                content: content,
-                timestamp: new Date(),
-                status: 'sent'
+                userId: userId,
+                text: text,
+                timestamp: Date.now()
             };
             
-            // Add to messages array
             messages.push(newMessage);
             
-            // Add to UI
-            addMessageToUI(newMessage, true);
-            
             // Clear input
-            messageInput.value = '';
+            input.value = '';
             
-            // Scroll to bottom
-            scrollToBottom();
+            // Update all chat windows
+            updateAllChats();
             
-            // Show typing indicator for other users
-            showTypingIndicator();
+            // Clear typing indicator for this user
+            clearTypingIndicator(userId);
+        }
+
+        // Handle typing indicator
+        function handleTyping(userId) {
+            // Set typing state
+            typingUsers[userId] = true;
+            updateTypingIndicators();
             
-            // Simulate responses from other users
-            setTimeout(() => {
-                hideTypingIndicator();
-                
-                // Random member responds (except current user)
-                const otherMembers = groupMembers.filter(m => !m.isYou);
-                const randomMember = otherMembers[Math.floor(Math.random() * otherMembers.length)];
-                
-                const responses = [
-                    "Good point!",
-                    "I agree with that",
-                    "Thanks for sharing",
-                    "Let's discuss this more",
-                    "That makes sense",
-                    "👍",
-                    "I'll work on that",
-                    "Great idea!"
-                ];
-                
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                
-                const responseMessage = {
-                    id: messages.length + 1,
-                    senderId: randomMember.id,
-                    senderName: randomMember.name,
-                    senderInitials: randomMember.initials,
-                    content: randomResponse,
-                    timestamp: new Date(),
-                    status: 'delivered'
-                };
-                
-                messages.push(responseMessage);
-                addMessageToUI(responseMessage, false);
-                
-                // Update message status to read
-                setTimeout(() => {
-                    newMessage.status = 'read';
-                    updateMessageStatus(newMessage.id);
-                }, 1000);
-                
-                scrollToBottom();
+            // Clear previous timeout
+            if (typingTimeouts[userId]) {
+                clearTimeout(typingTimeouts[userId]);
+            }
+            
+            // Set new timeout to clear typing indicator after 2 seconds
+            typingTimeouts[userId] = setTimeout(() => {
+                typingUsers[userId] = false;
+                updateTypingIndicators();
             }, 2000);
         }
-        
-        // Update message status
-        function updateMessageStatus(messageId) {
-            const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
-            if (messageElement) {
-                const statusElement = messageElement.querySelector('.message-status');
-                if (statusElement) {
-                    statusElement.className = 'message-status read';
-                    statusElement.innerHTML = '✓✓';
+
+        // Update typing indicators for all users
+        function updateTypingIndicators() {
+            for (let viewerId = 1; viewerId <= 3; viewerId++) {
+                const typingDiv = document.getElementById(`user${viewerId}-typing`);
+                if (!typingDiv) continue;
+                
+                // Get list of users typing (excluding the viewer)
+                const typingList = [];
+                for (let userId = 1; userId <= 3; userId++) {
+                    if (typingUsers[userId] && userId !== viewerId) {
+                        typingList.push(users[userId].name);
+                    }
+                }
+                
+                // Update typing indicator text
+                if (typingList.length === 0) {
+                    typingDiv.textContent = '';
+                } else if (typingList.length === 1) {
+                    typingDiv.textContent = `${typingList[0]} is typing...`;
+                } else if (typingList.length === 2) {
+                    typingDiv.textContent = `${typingList[0]} and ${typingList[1]} are typing...`;
+                } else {
+                    typingDiv.textContent = 'Multiple people are typing...';
                 }
             }
         }
-        
-        // Show typing indicator
-        function showTypingIndicator() {
-            typingIndicator.style.display = 'flex';
-            scrollToBottom();
-        }
-        
-        // Hide typing indicator
-        function hideTypingIndicator() {
-            typingIndicator.style.display = 'none';
-        }
-        
-        // Scroll to bottom
-        function scrollToBottom() {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-        
-        // Handle typing
-        messageInput.addEventListener('input', function() {
-            // Could implement "user is typing" feature here
-        });
-        
-        // Handle Enter key
-        messageInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
+
+        // Clear typing indicator for a user
+        function clearTypingIndicator(userId) {
+            typingUsers[userId] = false;
+            if (typingTimeouts[userId]) {
+                clearTimeout(typingTimeouts[userId]);
+                typingTimeouts[userId] = null;
             }
-        });
-        
-        // Show members list
-        function showMembers() {
-            document.getElementById('membersList').classList.add('show');
-            document.getElementById('overlay').classList.add('show');
+            updateTypingIndicators();
         }
-        
-        // Hide members list
-        function hideMembers() {
-            document.getElementById('membersList').classList.remove('show');
-            document.getElementById('overlay').classList.remove('show');
+
+        // Set up event listeners for all users
+        function setupEventListeners() {
+            for (let userId = 1; userId <= 3; userId++) {
+                const input = document.getElementById(`user${userId}-input`);
+                
+                // Handle typing
+                input.addEventListener('input', () => {
+                    handleTyping(userId);
+                });
+                
+                // Handle Enter key
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMessage(userId);
+                    }
+                });
+                
+                // Handle focus/blur for typing indicator
+                input.addEventListener('blur', () => {
+                    clearTypingIndicator(userId);
+                });
+            }
         }
-        
+
         // Initialize chat
+        function initChat() {
+            updateAllChats();
+            setupEventListeners();
+            
+            // Add welcome message from system
+            setTimeout(() => {
+                const systemMessage = {
+                    id: messages.length + 1,
+                    userId: 0, // System user
+                    text: 'All users are now connected. Start chatting!',
+                    timestamp: Date.now()
+                };
+                messages.push(systemMessage);
+                updateAllChats();
+            }, 1000);
+        }
+
+        // Start the chat
         initChat();
     </script>
 </body>
