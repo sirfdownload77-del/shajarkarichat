@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #4a5568;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chat-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .chat-header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .messages-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f7fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.sent {
+            background: #4299e1;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.received {
+            background: white;
+            color: #2d3748;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.75rem;
+        }
+
+        .message.sent .message-info {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .message.received .message-info {
+            color: #718096;
+        }
+
+        .sender-name {
+            font-weight: 600;
+        }
+
+        .message-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        #messageInput:focus {
+            border-color: #4299e1;
+        }
+
+        #sendButton {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: #4299e1;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #sendButton:hover {
+            background: #3182ce;
+            transform: scale(1.1);
+        }
+
+        #sendButton:active {
+            transform: scale(0.95);
+        }
+
+        .typing-indicator {
+            padding: 10px 15px;
+            background: white;
+            border-radius: 15px;
+            align-self: flex-start;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #718096;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .clear-button {
+            background: #fc8181;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .clear-button:hover {
+            background: #f56565;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Simple Chat</h2>
+            <p>Built from scratch</p>
+            <button class="clear-button" onclick="clearChat()">Clear Chat</button>
+        </div>
+        
+        <div class="messages-area" id="messagesArea">
+            <div class="message received">
+                <div class="message-info">
+                    <span class="sender-name">System</span>
+                    <span class="timestamp">Just now</span>
+                </div>
+                <div class="message-text">Welcome to the chat! Type a message to start.</div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Type your message..." autocomplete="off">
+            <button id="sendButton" onclick="sendMessage()">→</button>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const messagesArea = document.getElementById('messagesArea');
+        const messageInput = document.getElementById('messageInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+        
+        // Chat state
+        let messageCount = 0;
+        let typingTimer;
+        let isTyping = false;
+        
+        // Auto-response messages
+        const autoResponses = [
+            "That's interesting! Tell me more.",
+            "I see what you mean!",
+            "Thanks for sharing that!",
+            "Great point!",
+            "I hadn't thought of it that way.",
+            "Absolutely!",
+            "That makes sense.",
+            "Interesting perspective!",
+            "I agree with you.",
+            "Thanks for the message!"
+        ];
+        
+        // Get current time in HH:MM format
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // Add a message to the chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const messageInfo = document.createElement('div');
+            messageInfo.className = 'message-info';
+            
+            const senderName = document.createElement('span');
+            senderName.className = 'sender-name';
+            senderName.textContent = sender === 'sent' ? 'You' : 'Other User';
+            
+            const timestamp = document.createElement('span');
+            timestamp.className = 'timestamp';
+            timestamp.textContent = getCurrentTime();
+            
+            messageInfo.appendChild(senderName);
+            messageInfo.appendChild(timestamp);
+            
+            const messageText = document.createElement('div');
+            messageText.className = 'message-text';
+            messageText.textContent = text;
+            
+            messageDiv.appendChild(messageInfo);
+            messageDiv.appendChild(messageText);
+            
+            messagesArea.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+            
+            messageCount++;
+        }
+        
+        // Send message function
+        function sendMessage() {
+            const messageText = messageInput.value.trim();
+            
+            if (messageText === '') {
+                alert('Please type a message!');
+                return;
+            }
+            
+            // Add user message
+            addMessage(messageText, 'sent');
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate auto-response after delay
+            setTimeout(() => {
+                hideTypingIndicator();
+                
+                // Get random response
+                const randomIndex = Math.floor(Math.random() * autoResponses.length);
+                const response = autoResponses[randomIndex];
+                
+                // Add auto-response
+                addMessage(response, 'received');
+                
+                // Check for special keywords
+                checkForSpecialResponses(messageText.toLowerCase());
+            }, 1500);
+        }
+        
+        // Show typing indicator
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'block';
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+        
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+        
+        // Check for special keywords
+        function checkForSpecialResponses(message) {
+            if (message.includes('hello') || message.includes('hi')) {
+                setTimeout(() => {
+                    addMessage('Hello! How are you today?', 'received');
+                }, 500);
+            }
+            
+            if (message.includes('how are you')) {
+                setTimeout(() => {
+                    addMessage('I\'m doing great, thanks for asking!', 'received');
+                }, 500);
+            }
+            
+            if (message.includes('bye')) {
+                setTimeout(() => {
+                    addMessage('Goodbye! Take care! 👋', 'received');
+                }, 500);
+            }
+            
+            if (message.includes('thank')) {
+                setTimeout(() => {
+                    addMessage('You\'re welcome! 😊', 'received');
+                }, 500);
+            }
+        }
+        
+        // Handle typing indicator
+        messageInput.addEventListener('input', function() {
+            if (!isTyping) {
+                isTyping = true;
+                // Could implement "User is typing" feature here
+            }
+            
+            // Clear previous timer
+            clearTimeout(typingTimer);
+            
+            // Set new timer
+            typingTimer = setTimeout(() => {
+                isTyping = false;
+                // Could implement "User stopped typing" here
+            }, 1000);
+        });
+        
+        // Handle Enter key
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Clear chat function
+        function clearChat() {
+            if (confirm('Are you sure you want to clear all messages?')) {
+                messagesArea.innerHTML = `
+                    <div class="message received">
+                        <div class="message-info">
+                            <span class="sender-name">System</span>
+                            <span class="timestamp">Just now</span>
+                        </div>
+                        <div class="message-text">Chat cleared. Start a new conversation!</div>
+                    </div>
+                `;
+                messageCount = 0;
+            }
+        }
+        
+        // Add initial messages for demonstration
+        setTimeout(() => {
+            addMessage('This is a simple chat built without any frameworks!', 'received');
+        }, 1000);
+        
+        setTimeout(() => {
+            addMessage('You can type messages and I\'ll respond automatically.', 'received');
+        }, 2000);
+        
+        // Focus on input
+        messageInput.focus();
+    </script>
+</body>
+</html>
